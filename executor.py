@@ -42,7 +42,6 @@ class Executor:
         self.triggers = {}
         self.handlerQueue = []
         self.handlerPin = 0
-        self.cards = []
 
         self.corresbondingTriggersBefore = {
             HandlerType.ENTER: TriggerType.BEFORE_ENTER,
@@ -76,13 +75,13 @@ class Executor:
         while self.handlerPin < self.maxIter and self.handlerPin < len(
             self.handlerQueue
         ):
+
             handler = self.handlerQueue[self.handlerPin]
             handlerParams = handler.params
 
             triggerBefore = self.corresbondingTriggersBefore[handler.handlerType]
             if triggerBefore in self.triggers:
                 for trigger in self.triggers[triggerBefore]:
-                    print(f"TriggeringBefore {trigger.triggerType}")
                     handlerParams, context, error = trigger.trigger(
                         handlerParams, context, self
                     )
@@ -91,16 +90,19 @@ class Executor:
                         return context, error
 
             if handler.handlerType == HandlerType.ENTER:
-                self.cards.append(handlerParams["card"])
+                print("Enter")
+                context["cards"].append(handlerParams["card"])
             elif handler.handlerType == HandlerType.DIE:
-                for i, card in enumerate(self.cards):
+                print("Die")
+                for i, card in enumerate(context["cards"]):
                     if card["UUID"] == handlerParams["UUID"]:
-                        self.cards.pop(i)
+                        context["cards"].pop(i)
                         break
             elif handler.handlerType == HandlerType.DAMAGE:
+                print("Damage")
                 value = handlerParams["value"]
                 targetUUID = handlerParams["targetUUID"]
-                for card in self.cards:
+                for card in context["cards"]:
                     if card["UUID"] == targetUUID:
                         card["life"] -= value
                         if card["life"] <= 0:
@@ -109,12 +111,15 @@ class Executor:
                             )
                         break
             elif handler.handlerType == HandlerType.ADD_LIFE:
+                print("Add Life")
                 value = handlerParams["value"]
                 targetUUID = handlerParams["targetUUID"]
-                for card in self.cards:
+                for card in context["cards"]:
                     if card["UUID"] == targetUUID:
                         card["life"] += value
                         break
+            else:
+                print("Unknown")
 
             triggerAfter = self.correspondingTriggersAfter[handler.handlerType]
             if triggerAfter in self.triggers:
@@ -128,11 +133,13 @@ class Executor:
 
             self.handlerPin += 1
         self.handlerQueue = []
+        self.handlerPin = 0
         return context, None
 
 
 # TEST
 def test():
+    context = {"cards": []}
     executor = Executor()
 
     # A has life = 2, B has (all damages + 1), C has 1 life and effect (when a unit dies, it gains 1 life), D has onEnter, deal 1 damage
@@ -166,15 +173,15 @@ def test():
     executor.registerTrigger(Trigger(TriggerType.AFTER_DIE, C_effect))
 
     D_card = {"UUID": "D", "life": 1}
-    executor.execute({})
+    context, _ = executor.execute(context)
 
     executor.commitHandler(Handler(HandlerType.ENTER, {"card": D_card}))
-    executor.execute({})
+    context, _ = executor.execute(context)
     executor.commitHandler(
         Handler(HandlerType.DAMAGE, {"targetUUID": "A", "value": 1}), "next"
     )
-    executor.execute({})
-    print(executor.cards)
+    context, _ = executor.execute(context)
+    print(context["cards"])
 
 
 test()
