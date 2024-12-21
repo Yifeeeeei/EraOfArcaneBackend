@@ -4,7 +4,8 @@ package model
 type Transaction interface {
 	Execute(map[string]any) error
 	GetTypes() []string
+	GetParams() map[string]any
 	GetId() Id
-	GetFrom() Instance
-	GetTo() Instance
+	GetFrom() Id
+	GetTo() Id
 }

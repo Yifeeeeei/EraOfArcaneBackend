@@ -3,11 +3,13 @@ package model
 import (
 	"fmt"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 // story:
 // there are four cards
-// # A has life = 2, B has (all demon damages + 1), C has 1 life and effect (when a unit dies, it gains 1 life), D has onEnter, deal 1 damage
+// # A has life = 2, B has (all damages + 1), C has 1 life and effect (when a unit dies, it gains 1 life), D has onEnter, deal 1 damage
 
 // the game
 var game = []Instance{}
@@ -32,7 +34,7 @@ func NewCardA() *CardA {
 }
 
 func (c *CardA) GetId() Id {
-	return Id{0}
+	return Id{0, true}
 }
 
 func (c *CardA) GetLife() int {
@@ -40,7 +42,7 @@ func (c *CardA) GetLife() int {
 }
 
 func (c *CardA) GetStates() []string {
-	return []string{"demon"}
+	return []string{}
 }
 
 func (c *CardA) GetValues() map[string]any {
@@ -52,7 +54,7 @@ func (c *CardA) GetValues() map[string]any {
 type EffectB struct{}
 
 func (e *EffectB) GetId() Id {
-	return Id{1}
+	return Id{1, true}
 }
 
 func (e *EffectB) Modify(t Transaction, modifiers map[string]any) (map[string]any, error) {
@@ -66,8 +68,8 @@ func (e *EffectB) Modify(t Transaction, modifiers map[string]any) (map[string]an
 			} else {
 				modifiers["damageAddOn"] = 1
 			}
+			break
 		}
-		break
 	}
 	return modifiers, nil
 }
@@ -85,7 +87,7 @@ func NewCardC() *CardC {
 }
 
 func (c *CardC) GetId() Id {
-	return Id{2}
+	return Id{2, true}
 }
 
 func (c *CardC) GetStates() []string {
@@ -99,20 +101,21 @@ func (c *CardC) GetValues() map[string]any {
 type EffectC struct{}
 
 func (e *EffectC) GetId() Id {
-	return Id{3}
+	return Id{3, true}
 }
 
-type AddLifeTransaction struct{}
+type AddLifeTransaction struct {
+	target Id
+}
 
 func (t *AddLifeTransaction) Execute(modifiers map[string]any) error {
 	for _, instance := range game {
-		if instance.GetId().id == 2 {
+		if instance.GetId().id == t.target.id {
 			// convert it to card c
 			cardC, ok := instance.(*CardC)
 			if ok {
 				cardC.Life++
 			}
-
 		}
 	}
 	return nil
@@ -123,29 +126,19 @@ func (t *AddLifeTransaction) GetTypes() []string {
 }
 
 func (t *AddLifeTransaction) GetId() Id {
-	return Id{4}
+	return Id{4, true}
 }
 
-func (t *AddLifeTransaction) GetFrom() Instance {
-	for _, instance := range game {
-		if instance.GetId().id == 2 {
-			// convert it to card c
-			return instance
-
-		}
-	}
-	return nil
+func (t *AddLifeTransaction) GetParams() map[string]any {
+	return map[string]any{}
 }
 
-func (t *AddLifeTransaction) GetTo() Instance {
-	for _, instance := range game {
-		if instance.GetId().id == 2 {
-			// convert it to card c
-			return instance
+func (t *AddLifeTransaction) GetFrom() Id {
+	return Id{}
+}
 
-		}
-	}
-	return nil
+func (t *AddLifeTransaction) GetTo() Id {
+	return t.target
 }
 
 func (e *EffectC) Modify(t Transaction, modifiers map[string]any) (map[string]any, error) {
@@ -155,7 +148,7 @@ func (e *EffectC) Modify(t Transaction, modifiers map[string]any) (map[string]an
 	for _, transactionType := range transactionTypes {
 		if transactionType == "die" {
 			// add life
-			executor.AddTransaction(&AddLifeTransaction{})
+			executor.AddTransaction(&AddLifeTransaction{target: Id{2, true}})
 		}
 	}
 	return modifiers, nil
@@ -177,22 +170,26 @@ func (t *DieTransaction) Execute(modifiers map[string]any) error {
 	return nil
 }
 
+func (t *DieTransaction) GetParams() map[string]any {
+	return map[string]any{}
+}
+
 func (t *DieTransaction) GetTypes() []string {
 	return []string{"die"}
 }
 
 func (t *DieTransaction) GetId() Id {
-	return Id{5}
+	return Id{5, true}
 }
 
-func (t *DieTransaction) GetFrom() Instance {
+func (t *DieTransaction) GetFrom() Id {
 	// doesn't matter here
-	return nil
+	return Id{}
 }
 
-func (t *DieTransaction) GetTo() Instance {
+func (t *DieTransaction) GetTo() Id {
 	// doesn't matter here
-	return nil
+	return Id{}
 }
 
 // D's enter transaction
@@ -223,22 +220,26 @@ func (t *DealDamageTransaction) Execute(modifiers map[string]any) error {
 	return nil
 }
 
+func (t *DealDamageTransaction) GetParams() map[string]any {
+	return map[string]any{}
+}
+
 func (t *DealDamageTransaction) GetTypes() []string {
 	return []string{"damage"}
 }
 
 func (t *DealDamageTransaction) GetId() Id {
-	return Id{6}
+	return Id{6, true}
 }
 
-func (t *DealDamageTransaction) GetFrom() Instance {
+func (t *DealDamageTransaction) GetFrom() Id {
 	// doesn't matter here
-	return nil
+	return Id{}
 }
 
-func (t *DealDamageTransaction) GetTo() Instance {
+func (t *DealDamageTransaction) GetTo() Id {
 	// doesn't matter here
-	return nil
+	return Id{}
 }
 
 // func (c *)
@@ -257,8 +258,8 @@ func TestScene(t *testing.T) {
 
 	// d enters, add transaction
 	executor.AddTransaction(&DealDamageTransaction{
-		FromId:       Id{6},
-		ToId:         Id{0},
+		FromId:       Id{6, true}, // card D
+		ToId:         Id{0, true}, // card A
 		DamageAmount: 1,
 	})
 
@@ -275,5 +276,9 @@ func TestScene(t *testing.T) {
 			}
 		}
 	}
+
+	assert.Equal(t, len(game), 1)
+	assert.Equal(t, game[0].GetId().id, 2)
+	assert.Equal(t, game[0].(*CardC).Life, 2)
 
 }
