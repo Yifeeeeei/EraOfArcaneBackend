@@ -1,7 +1,6 @@
 package model
 
 // if you want to use id, you should always call IdGeneratorInstance.GenerateId()
-var IdGeneratorInstance = NewIdGenerator()
 
 type Id struct {
 	id    int

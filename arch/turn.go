@@ -17,8 +17,8 @@ type Turn struct {
 	TurnNumber int
 }
 
-func NewTurn() *Turn {
-	return &Turn{Id: model.IdGeneratorInstance.GenerateId()}
+func NewTurn(board *Board) *Turn {
+	return &Turn{Id: board.IdGenerator.GenerateId()}
 }
 
 // implement instance interface

@@ -30,4 +30,13 @@ const (
 const (
 	Equipment Class = iota
 	Consumable
+	Potion
+	Scroll
+	SpellScroll
+)
+
+// 稀有度
+const (
+	Legendary Class = iota
+	Spawn
 )

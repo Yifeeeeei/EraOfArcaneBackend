@@ -11,6 +11,8 @@ import (
 // If you want to find something, you should ask board with the corresponding id.
 
 type Board struct {
+	IdGenerator model.IdGenerator
+
 	AllInstances map[model.Id]model.Instance
 	Player0Id    model.Id
 	Player1Id    model.Id

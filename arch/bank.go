@@ -17,9 +17,9 @@ type Bank struct {
 // values:
 // - it does not provide values
 
-func NewBank() *Bank {
+func NewBank(board *Board) *Bank {
 	return &Bank{
-		Id:       model.IdGeneratorInstance.GenerateId(),
+		Id:       board.IdGenerator.GenerateId(),
 		Elements: element.NewElements(),
 	}
 }

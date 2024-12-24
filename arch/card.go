@@ -2,6 +2,7 @@ package arch
 
 import (
 	"github.com/Yifeeeeei/EraOfArcaneBackend/arch/class"
+	"github.com/Yifeeeeei/EraOfArcaneBackend/arch/consts"
 	"github.com/Yifeeeeei/EraOfArcaneBackend/arch/element"
 	"github.com/Yifeeeeei/EraOfArcaneBackend/arch/model"
 	"github.com/Yifeeeeei/EraOfArcaneBackend/arch/rarity"
@@ -90,6 +91,37 @@ type EquipmentCard struct {
 
 type ConsumableCard struct {
 	ItemCard
+}
+
+type SpellScrollCard struct {
+	ConsumableCard
+	Attack int
+	Power  int
+}
+
+func NewSpellScrollCard(board *Board, elem element.Elem, enterCost element.Elements, rarity rarity.Rarity) *SpellScrollCard {
+	return &SpellScrollCard{
+		ConsumableCard: ConsumableCard{
+			ItemCard: ItemCard{
+				Card: Card{
+					Board:  board,
+					States: []string{consts.STATE_CARD},
+					Values: map[string]any{
+						consts.STATE_TYPE: consts.VALUE_TYPE_ITEM,
+					},
+					Id:        board.IdGenerator.GenerateId(),
+					EnterCost: enterCost,
+					Elem:      elem,
+					Classes:   []class.Class{class.Consumable, class.SpellScroll},
+					Rarity:    rarity,
+				},
+			},
+		},
+	}
+}
+
+type OtherConsumableCard struct {
+	ConsumableCard
 }
 
 // character card
