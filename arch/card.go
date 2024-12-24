@@ -89,6 +89,27 @@ type EquipmentCard struct {
 	Gain   element.Elements
 }
 
+func NewEquipmentCard(board *Board, elem element.Elem, enterCost element.Elements, rarity rarity.Rarity, attack int, gain element.Elements, value_owner string, value_location string) *EquipmentCard {
+	return &EquipmentCard{
+		ItemCard: ItemCard{
+			Card: Card{
+				Board:  board,
+				States: []string{consts.STATE_CARD, consts.KEY_OWNER, consts.STATE_LOCATION, consts.STATE_TYPE},
+				Values: map[string]any{
+					consts.KEY_OWNER:    value_owner,
+					consts.KEY_LOCATION: value_location,
+					consts.KEY_TYPE:     consts.VALUE_TYPE_ITEM,
+				},
+				Id:        board.IdGenerator.GenerateId(),
+				EnterCost: enterCost,
+				Elem:      elem,
+				Classes:   []class.Class{class.Equipment},
+				Rarity:    rarity,
+			},
+		},
+	}
+}
+
 type ConsumableCard struct {
 	ItemCard
 }
@@ -99,15 +120,17 @@ type SpellScrollCard struct {
 	Power  int
 }
 
-func NewSpellScrollCard(board *Board, elem element.Elem, enterCost element.Elements, rarity rarity.Rarity) *SpellScrollCard {
+func NewSpellScrollCard(board *Board, elem element.Elem, enterCost element.Elements, rarity rarity.Rarity, value_owner string, value_location string) *SpellScrollCard {
 	return &SpellScrollCard{
 		ConsumableCard: ConsumableCard{
 			ItemCard: ItemCard{
 				Card: Card{
 					Board:  board,
-					States: []string{consts.STATE_CARD},
+					States: []string{consts.STATE_CARD, consts.KEY_OWNER, consts.STATE_LOCATION, consts.STATE_TYPE},
 					Values: map[string]any{
-						consts.STATE_TYPE: consts.VALUE_TYPE_ITEM,
+						consts.KEY_OWNER:    value_owner,
+						consts.KEY_LOCATION: value_location,
+						consts.KEY_TYPE:     consts.VALUE_TYPE_ITEM,
 					},
 					Id:        board.IdGenerator.GenerateId(),
 					EnterCost: enterCost,
