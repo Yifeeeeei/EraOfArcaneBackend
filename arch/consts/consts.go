@@ -16,16 +16,6 @@ package consts
 // 法术 spell
 // 咒术 curse
 
-const (
-	ELEMENT_NONE  = "element_none"
-	ELEMENT_FIRE  = "element_fire"
-	ELEMENT_WATER = "element_water"
-	ELEMENT_EARTH = "element_earth"
-	ELEMENT_AIR   = "element_air"
-	ELEMENT_LIGHT = "element_light"
-	ELEMENT_DARK  = "element_dark"
-)
-
 // states
 // here list all the states and its corresponding values
 
