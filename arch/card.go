@@ -1,8 +1,10 @@
 package arch
 
 import (
-	"github.com/Yifeeeeei/EraOfArcaneBackend/arch/consts"
+	"github.com/Yifeeeeei/EraOfArcaneBackend/arch/class"
+	"github.com/Yifeeeeei/EraOfArcaneBackend/arch/element"
 	"github.com/Yifeeeeei/EraOfArcaneBackend/arch/model"
+	"github.com/Yifeeeeei/EraOfArcaneBackend/arch/rarity"
 )
 
 // this is the biggest part of arch
@@ -13,20 +15,25 @@ import (
 //    - what type is it? (type: companion, ability, item, character)
 //    - register all these in consts
 
-type Card struct {
-	Board  *Board // have the board pointer to access other stuffs
-	Id     model.Id
-	States []string
-	Values map[string]any
-}
+// relations
+// card --> ability
+//      |   |-> spell
+//      |   |-> curse
+//      |-> companion
+//      |-> item
+//	    |   |-> equipment
+//	    |   |-> consumable
+//      |-> character
 
-func NewCard(board *Board, cardOwner string, cardLocation string, cardType string) *Card {
-	return &Card{
-		Board:  board,
-		Id:     model.IdGeneratorInstance.GenerateId(),
-		States: []string{consts.STATE_CARD, consts.STATE_OWNER, consts.STATE_LOCATION, consts.STATE_TYPE},
-		Values: map[string]any{consts.STATE_OWNER: cardOwner, consts.STATE_LOCATION: cardLocation, consts.STATE_TYPE: cardType},
-	}
+type Card struct {
+	Board     *Board // have the board pointer to access other stuffs
+	Id        model.Id
+	States    []string
+	Values    map[string]any
+	EnterCost element.Elements
+	Elem      element.Elem
+	Classes   []class.Class
+	Rarity    rarity.Rarity
 }
 
 func (c *Card) GetId() model.Id {
@@ -39,4 +46,56 @@ func (c *Card) GetStates() []string {
 
 func (c *Card) GetValues() map[string]any {
 	return c.Values
+}
+
+func (c *Card) GetEnterCost() element.Elements {
+	return c.EnterCost
+}
+
+// companion card is a type of card, it should have life, attack
+type CompanionCard struct {
+	Card
+	Life   int
+	Attack int
+	Gain   element.Elements
+	Class  class.Class
+}
+
+// ability card
+type AbilityCard struct {
+	Card
+	UseCost element.Elements
+}
+
+type SpellCard struct {
+	AbilityCard
+	Attack int
+	Power  int
+}
+
+type CurseCard struct {
+	AbilityCard
+}
+
+// item card, this is the complicated one
+type ItemCard struct {
+	Card
+}
+
+type EquipmentCard struct {
+	ItemCard
+	Attack int
+	Gain   element.Elements
+}
+
+type ConsumableCard struct {
+	ItemCard
+}
+
+// character card
+type CharacterCard struct {
+	Card
+	Life   int
+	Attack int
+	Gain   element.Elements
 }

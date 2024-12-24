@@ -1,6 +1,18 @@
-package arch
+package element
 
 // elements is not an instance
+
+type Elem int
+
+const (
+	None Elem = iota
+	Fire
+	Water
+	Earth
+	Air
+	Light
+	Dark
+)
 
 type Elements struct {
 	None  int

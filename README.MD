@@ -2,7 +2,7 @@
 
 ## 卡牌效果与执行
 
-卡牌效果模型相关代码在./model之中，demo在model_test之中。
+卡牌效果模型相关代码在./arch/model之中，demo在model_test之中。
 
 ### 什么是卡牌效果
 

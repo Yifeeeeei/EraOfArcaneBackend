@@ -1,11 +1,14 @@
 package arch
 
-import "github.com/Yifeeeeei/EraOfArcaneBackend/arch/model"
+import (
+	"github.com/Yifeeeeei/EraOfArcaneBackend/arch/element"
+	"github.com/Yifeeeeei/EraOfArcaneBackend/arch/model"
+)
 
 // bank holds the elements of ONE player
 type Bank struct {
 	Id       model.Id
-	Elements *Elements
+	Elements *element.Elements
 }
 
 // Bank is an instance
@@ -17,7 +20,7 @@ type Bank struct {
 func NewBank() *Bank {
 	return &Bank{
 		Id:       model.IdGeneratorInstance.GenerateId(),
-		Elements: NewElements(),
+		Elements: element.NewElements(),
 	}
 }
 

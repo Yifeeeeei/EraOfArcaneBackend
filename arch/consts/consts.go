@@ -1,5 +1,31 @@
 package consts
 
+// -- vocabulary --
+// 伙伴 companion
+// 技能 ability
+// 物品 item
+// 人物 character
+// 生命 life
+// 攻击 attack
+// 花费 cost
+// 入场 enter
+// 使用 use
+// 负载 gain
+// 威力 power
+// 属性 elem
+// 法术 spell
+// 咒术 curse
+
+const (
+	ELEMENT_NONE  = "element_none"
+	ELEMENT_FIRE  = "element_fire"
+	ELEMENT_WATER = "element_water"
+	ELEMENT_EARTH = "element_earth"
+	ELEMENT_AIR   = "element_air"
+	ELEMENT_LIGHT = "element_light"
+	ELEMENT_DARK  = "element_dark"
+)
+
 // states
 // here list all the states and its corresponding values
 
