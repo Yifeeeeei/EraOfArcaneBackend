@@ -59,7 +59,7 @@ func (e *EffectB) GetId() Id {
 
 func (e *EffectB) Modify(t Transaction, modifiers map[string]any) (map[string]any, error) {
 	// this effects triggers before a transaction
-	transactionTypes := t.GetTypes()
+	transactionTypes := t.GetStates()
 	for _, transactionType := range transactionTypes {
 		if transactionType == "damage" {
 			_, ok := modifiers["damageAddOn"]
@@ -121,7 +121,7 @@ func (t *AddLifeTransaction) Execute(modifiers map[string]any) error {
 	return nil
 }
 
-func (t *AddLifeTransaction) GetTypes() []string {
+func (t *AddLifeTransaction) GetStates() []string {
 	return []string{"addLife"}
 }
 
@@ -129,7 +129,7 @@ func (t *AddLifeTransaction) GetId() Id {
 	return Id{4, true}
 }
 
-func (t *AddLifeTransaction) GetParams() map[string]any {
+func (t *AddLifeTransaction) GetValues() map[string]any {
 	return map[string]any{}
 }
 
@@ -144,7 +144,7 @@ func (t *AddLifeTransaction) GetTo() Id {
 func (e *EffectC) Modify(t Transaction, modifiers map[string]any) (map[string]any, error) {
 	// this effect triggers after a transaction
 	// if type contains die
-	transactionTypes := t.GetTypes()
+	transactionTypes := t.GetStates()
 	for _, transactionType := range transactionTypes {
 		if transactionType == "die" {
 			// add life
@@ -170,11 +170,11 @@ func (t *DieTransaction) Execute(modifiers map[string]any) error {
 	return nil
 }
 
-func (t *DieTransaction) GetParams() map[string]any {
+func (t *DieTransaction) GetValues() map[string]any {
 	return map[string]any{}
 }
 
-func (t *DieTransaction) GetTypes() []string {
+func (t *DieTransaction) GetStates() []string {
 	return []string{"die"}
 }
 
@@ -220,11 +220,11 @@ func (t *DealDamageTransaction) Execute(modifiers map[string]any) error {
 	return nil
 }
 
-func (t *DealDamageTransaction) GetParams() map[string]any {
+func (t *DealDamageTransaction) GetValues() map[string]any {
 	return map[string]any{}
 }
 
-func (t *DealDamageTransaction) GetTypes() []string {
+func (t *DealDamageTransaction) GetStates() []string {
 	return []string{"damage"}
 }
 

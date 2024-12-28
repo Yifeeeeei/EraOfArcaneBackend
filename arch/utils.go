@@ -1,6 +1,9 @@
 package arch
 
-import "github.com/Yifeeeeei/EraOfArcaneBackend/arch/model"
+import (
+	"github.com/Yifeeeeei/EraOfArcaneBackend/arch/class"
+	"github.com/Yifeeeeei/EraOfArcaneBackend/arch/model"
+)
 
 // tools
 // see if a string is in a list
@@ -17,6 +20,15 @@ func InStringList(str string, list []string) bool {
 func InIdList(id model.Id, list []model.Id) bool {
 	for _, i := range list {
 		if i.SameAs(id) {
+			return true
+		}
+	}
+	return false
+}
+
+func InClassList(class class.Class, list []class.Class) bool {
+	for _, c := range list {
+		if c == class {
 			return true
 		}
 	}

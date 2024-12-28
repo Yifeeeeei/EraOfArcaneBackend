@@ -80,3 +80,11 @@ func (b *Board) RemoveCardById(cardId model.Id) error {
 	}
 	return fmt.Errorf("card not found: %s", cardId.String())
 }
+
+func (b *Board) GetCardById(cardId model.Id) (*Card, error) {
+	card, ok := b.AllInstances[cardId].(*Card)
+	if !ok {
+		return nil, fmt.Errorf("instance not found: %s", cardId.String())
+	}
+	return card, nil
+}

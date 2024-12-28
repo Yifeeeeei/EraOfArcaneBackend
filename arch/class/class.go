@@ -4,6 +4,13 @@ package class
 
 type Class int
 
+const (
+	Character Class = iota
+	Ability
+	Companion
+	Item
+)
+
 // 技能分类: 创造，驱动，灵媒，聚能，神秘，幻变
 const (
 	Create Class = iota

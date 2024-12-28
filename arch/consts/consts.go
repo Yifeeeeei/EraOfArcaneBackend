@@ -25,7 +25,7 @@ const (
 	KEY_TURN_NUMBER = "turn_turnNumber" // int
 )
 
-// card.go
+// card
 
 const (
 	STATE_CARD = "card"
@@ -42,4 +42,15 @@ const (
 	VALUE_LOCATION_HAND        = "card_hand"
 	VALUE_LOCATION_BATTLEFIELD = "card_battlefield"
 	VALUE_LOCATION_GRAVEYARD   = "card_graveyard"
+)
+
+// transactions
+const (
+	STATE_TRANSACTION = "transaction"
+
+	STATE_TRANSACTION_TYPE        = "transaction_type"
+	KEY_TRANSACTION_TYPE          = "transaction_type" // string, half-defined
+	VALUE_TRANSACTION_DEAL_DAMAGE = "transaction_deal_damage"
+	VALUE_TRANSACTION_TAKE_DAMAGE = "transaction_take_damage"
+	VALUE_TRANSACTION_DIE         = "transaction_die"
 )

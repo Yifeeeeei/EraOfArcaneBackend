@@ -57,3 +57,19 @@ func (c *Card) GetValues() map[string]any {
 func (c *Card) GetEnterCost() element.Elements {
 	return c.EnterCost
 }
+
+func (c *Card) IsCompanion() bool {
+	return InClassList(class.Companion, c.Classes)
+}
+
+func (c *Card) IsAbility() bool {
+	return InClassList(class.Ability, c.Classes)
+}
+
+func (c *Card) IsItem() bool {
+	return InClassList(class.Item, c.Classes)
+}
+
+func (c *Card) IsCharacter() bool {
+	return InClassList(class.Character, c.Classes)
+}
