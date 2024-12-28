@@ -133,11 +133,7 @@ func (t *AddLifeTransaction) GetValues() map[string]any {
 	return map[string]any{}
 }
 
-func (t *AddLifeTransaction) GetFrom() Id {
-	return Id{}
-}
-
-func (t *AddLifeTransaction) GetTo() Id {
+func (t *AddLifeTransaction) GetHost() Id {
 	return t.target
 }
 
@@ -182,12 +178,7 @@ func (t *DieTransaction) GetId() Id {
 	return Id{5, true}
 }
 
-func (t *DieTransaction) GetFrom() Id {
-	// doesn't matter here
-	return Id{}
-}
-
-func (t *DieTransaction) GetTo() Id {
+func (t *DieTransaction) GetHost() Id {
 	// doesn't matter here
 	return Id{}
 }
@@ -232,12 +223,7 @@ func (t *DealDamageTransaction) GetId() Id {
 	return Id{6, true}
 }
 
-func (t *DealDamageTransaction) GetFrom() Id {
-	// doesn't matter here
-	return Id{}
-}
-
-func (t *DealDamageTransaction) GetTo() Id {
+func (t *DealDamageTransaction) GetHost() Id {
 	// doesn't matter here
 	return Id{}
 }

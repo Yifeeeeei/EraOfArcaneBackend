@@ -6,6 +6,5 @@ type Transaction interface {
 	GetStates() []string
 	GetValues() map[string]any
 	GetId() Id
-	GetFrom() Id
-	GetTo() Id
+	GetHost() Id
 }

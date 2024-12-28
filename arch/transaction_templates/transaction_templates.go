@@ -11,20 +11,20 @@ import (
 type DealDamageTransaction struct {
 	Executor   *model.Executor
 	Id         model.Id
-	From       model.Id
-	To         model.Id
+	Host       model.Id
+	Target     model.Id
 	States     []string
 	Values     map[string]any
 	InitialDmg int
 	Board      *arch.Board
 }
 
-func NewDealDamageTransaction(board *arch.Board, from model.Id, to model.Id, Dmg int) *DealDamageTransaction {
+func NewDealDamageTransaction(board *arch.Board, host model.Id, target model.Id, Dmg int) *DealDamageTransaction {
 	return &DealDamageTransaction{
-		Id:    board.IdGenerator.GenerateId(),
-		Board: board,
-		From:  from,
-		To:    to,
+		Id:     board.IdGenerator.GenerateId(),
+		Board:  board,
+		Host:   host,
+		Target: target,
 		States: []string{
 			consts.STATE_TRANSACTION,
 			consts.STATE_TRANSACTION_TYPE,
@@ -42,12 +42,12 @@ func (t *DealDamageTransaction) Execute(modifiers map[string]any) error {
 		dmgAmount += val.(int)
 	}
 
-	_, err := t.Board.GetCardById(t.To)
+	_, err := t.Board.GetCardById(t.Target)
 	if err != nil {
 		return err
 	}
 
-	t.Executor.AddTransaction(NewTakeDamageTransaction(t.Board, t.To, t.To, dmgAmount, t.From))
+	t.Executor.AddTransaction(NewTakeDamageTransaction(t.Board, t.Host, t.Target, dmgAmount))
 	return nil
 
 }
@@ -64,19 +64,14 @@ func (t *DealDamageTransaction) GetId() model.Id {
 	return t.Id
 }
 
-func (t *DealDamageTransaction) GetFrom() model.Id {
-	return t.From
-}
-
-func (t *DealDamageTransaction) GetTo() model.Id {
-	return t.To
+func (t *DealDamageTransaction) GetHost() model.Id {
+	return t.Host
 }
 
 type TakeDamageTransaction struct {
 	Executor   *model.Executor
 	Id         model.Id
-	From       model.Id
-	To         model.Id
+	Host       model.Id
 	States     []string
 	Values     map[string]any
 	InitialDmg int
@@ -84,12 +79,11 @@ type TakeDamageTransaction struct {
 	Source     model.Id
 }
 
-func NewTakeDamageTransaction(board *arch.Board, from model.Id, to model.Id, Dmg int, source model.Id) *TakeDamageTransaction {
+func NewTakeDamageTransaction(board *arch.Board, damageSource model.Id, host model.Id, Dmg int) *TakeDamageTransaction {
 	return &TakeDamageTransaction{
 		Id:    board.IdGenerator.GenerateId(),
 		Board: board,
-		From:  from,
-		To:    to,
+		Host:  host,
 		States: []string{
 			consts.STATE_TRANSACTION,
 			consts.STATE_TRANSACTION_TYPE,
@@ -97,7 +91,7 @@ func NewTakeDamageTransaction(board *arch.Board, from model.Id, to model.Id, Dmg
 		Values: map[string]any{
 			consts.KEY_TRANSACTION_TYPE: consts.VALUE_TRANSACTION_TAKE_DAMAGE,
 		},
-		Source:     source,
+		Source:     damageSource,
 		InitialDmg: Dmg,
 	}
 }
@@ -108,7 +102,7 @@ func (t *TakeDamageTransaction) Execute(modifiers map[string]any) error {
 		dmgAmount += val.(int)
 	}
 
-	cardFom, err := t.Board.GetCardById(t.From)
+	cardFom, err := t.Board.GetCardById(t.Host)
 	if err != nil {
 		return err
 	}
@@ -120,7 +114,7 @@ func (t *TakeDamageTransaction) Execute(modifiers map[string]any) error {
 	cardFom.Life -= dmgAmount
 
 	if cardFom.Life <= 0 {
-		t.Executor.AddTransaction(NewDieTransaction(t.Board, t.From))
+		t.Executor.AddTransaction(NewDieTransaction(t.Board, t.Host))
 	}
 	return nil
 
@@ -138,12 +132,8 @@ func (t *TakeDamageTransaction) GetId() model.Id {
 	return t.Id
 }
 
-func (t *TakeDamageTransaction) GetFrom() model.Id {
-	return t.From
-}
-
-func (t *TakeDamageTransaction) GetTo() model.Id {
-	return t.To
+func (t *TakeDamageTransaction) GetHost() model.Id {
+	return t.Host
 }
 
 //
@@ -154,16 +144,15 @@ type DieTransaction struct {
 	States   []string
 	Values   map[string]any
 	Board    *arch.Board
-	FromId   model.Id
-	ToId     model.Id
+	Host     model.Id
 }
 
-func NewDieTransaction(board *arch.Board, from model.Id) *DieTransaction {
+func NewDieTransaction(board *arch.Board, host model.Id) *DieTransaction {
 
 	return &DieTransaction{
-		Id:     board.IdGenerator.GenerateId(),
-		Board:  board,
-		FromId: from,
+		Id:    board.IdGenerator.GenerateId(),
+		Board: board,
+		Host:  host,
 		States: []string{
 			consts.STATE_TRANSACTION,
 			consts.STATE_TRANSACTION_TYPE,
@@ -176,13 +165,13 @@ func NewDieTransaction(board *arch.Board, from model.Id) *DieTransaction {
 
 func (t *DieTransaction) Execute(modifiers map[string]any) error {
 	// put the card into graveyard
-	card, err := t.Board.GetCardById(t.FromId)
+	card, err := t.Board.GetCardById(t.Host)
 	if err != nil {
 		return err
 	}
 
 	if _, ok := card.Values[consts.KEY_LOCATION]; !ok {
-		return fmt.Errorf("card %v does not have location", t.FromId)
+		return fmt.Errorf("card %v does not have location", t.Host)
 	}
 
 	card.Values[consts.KEY_LOCATION] = consts.VALUE_LOCATION_GRAVEYARD
@@ -201,10 +190,6 @@ func (t *DieTransaction) GetId() model.Id {
 	return t.Id
 }
 
-func (t *DieTransaction) GetFrom() model.Id {
-	return t.FromId
-}
-
-func (t *DieTransaction) GetTo() model.Id {
-	return t.ToId
+func (t *DieTransaction) GetHost() model.Id {
+	return t.Host
 }
