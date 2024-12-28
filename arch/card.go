@@ -2,7 +2,6 @@ package arch
 
 import (
 	"github.com/Yifeeeeei/EraOfArcaneBackend/arch/class"
-	"github.com/Yifeeeeei/EraOfArcaneBackend/arch/consts"
 	"github.com/Yifeeeeei/EraOfArcaneBackend/arch/element"
 	"github.com/Yifeeeeei/EraOfArcaneBackend/arch/model"
 	"github.com/Yifeeeeei/EraOfArcaneBackend/arch/rarity"
@@ -35,6 +34,12 @@ type Card struct {
 	Elem      element.Elem
 	Classes   []class.Class
 	Rarity    rarity.Rarity
+	// ability
+	Duration int
+	Power    int
+	// companion
+	Attack int
+	Life   int
 }
 
 func (c *Card) GetId() model.Id {
@@ -51,106 +56,4 @@ func (c *Card) GetValues() map[string]any {
 
 func (c *Card) GetEnterCost() element.Elements {
 	return c.EnterCost
-}
-
-// companion card is a type of card, it should have life, attack
-type CompanionCard struct {
-	Card
-	Life   int
-	Attack int
-	Gain   element.Elements
-	Class  class.Class
-}
-
-// ability card
-type AbilityCard struct {
-	Card
-	UseCost element.Elements
-}
-
-type SpellCard struct {
-	AbilityCard
-	Attack int
-	Power  int
-}
-
-type CurseCard struct {
-	AbilityCard
-}
-
-// item card, this is the complicated one
-type ItemCard struct {
-	Card
-}
-
-type EquipmentCard struct {
-	ItemCard
-	Attack int
-	Gain   element.Elements
-}
-
-func NewEquipmentCard(board *Board, elem element.Elem, enterCost element.Elements, rarity rarity.Rarity, attack int, gain element.Elements, value_owner string, value_location string) *EquipmentCard {
-	return &EquipmentCard{
-		ItemCard: ItemCard{
-			Card: Card{
-				Board:  board,
-				States: []string{consts.STATE_CARD, consts.KEY_OWNER, consts.STATE_LOCATION, consts.STATE_TYPE},
-				Values: map[string]any{
-					consts.KEY_OWNER:    value_owner,
-					consts.KEY_LOCATION: value_location,
-					consts.KEY_TYPE:     consts.VALUE_TYPE_ITEM,
-				},
-				Id:        board.IdGenerator.GenerateId(),
-				EnterCost: enterCost,
-				Elem:      elem,
-				Classes:   []class.Class{class.Equipment},
-				Rarity:    rarity,
-			},
-		},
-	}
-}
-
-type ConsumableCard struct {
-	ItemCard
-}
-
-type SpellScrollCard struct {
-	ConsumableCard
-	Attack int
-	Power  int
-}
-
-func NewSpellScrollCard(board *Board, elem element.Elem, enterCost element.Elements, rarity rarity.Rarity, value_owner string, value_location string) *SpellScrollCard {
-	return &SpellScrollCard{
-		ConsumableCard: ConsumableCard{
-			ItemCard: ItemCard{
-				Card: Card{
-					Board:  board,
-					States: []string{consts.STATE_CARD, consts.KEY_OWNER, consts.STATE_LOCATION, consts.STATE_TYPE},
-					Values: map[string]any{
-						consts.KEY_OWNER:    value_owner,
-						consts.KEY_LOCATION: value_location,
-						consts.KEY_TYPE:     consts.VALUE_TYPE_ITEM,
-					},
-					Id:        board.IdGenerator.GenerateId(),
-					EnterCost: enterCost,
-					Elem:      elem,
-					Classes:   []class.Class{class.Consumable, class.SpellScroll},
-					Rarity:    rarity,
-				},
-			},
-		},
-	}
-}
-
-type OtherConsumableCard struct {
-	ConsumableCard
-}
-
-// character card
-type CharacterCard struct {
-	Card
-	Life   int
-	Attack int
-	Gain   element.Elements
 }

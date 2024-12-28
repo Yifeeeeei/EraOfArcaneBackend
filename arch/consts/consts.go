@@ -42,11 +42,4 @@ const (
 	VALUE_LOCATION_HAND        = "card_hand"
 	VALUE_LOCATION_BATTLEFIELD = "card_battlefield"
 	VALUE_LOCATION_GRAVEYARD   = "card_graveyard"
-
-	STATE_TYPE           = "card_type"
-	KEY_TYPE             = "card_type" // string, defined
-	VALUE_TYPE_COMPANION = "card_companion"
-	VALUE_TYPE_ABILITY   = "card_ability"
-	VALUE_TYPE_ITEM      = "card_item"
-	VALUE_TYPE_CHARACTER = "card_character"
 )
