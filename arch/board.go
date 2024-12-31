@@ -88,3 +88,11 @@ func (b *Board) GetCardById(cardId model.Id) (*Card, error) {
 	}
 	return card, nil
 }
+
+func (b *Board) GetInstanceById(instanceId model.Id) (model.Instance, error) {
+	instance, ok := b.AllInstances[instanceId]
+	if !ok {
+		return nil, fmt.Errorf("instance not found: %s", instanceId.String())
+	}
+	return instance, nil
+}

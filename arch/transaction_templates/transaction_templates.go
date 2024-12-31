@@ -193,3 +193,58 @@ func (t *DieTransaction) GetId() model.Id {
 func (t *DieTransaction) GetHost() model.Id {
 	return t.Host
 }
+
+// enhance a dual with a spell
+type EnhanceTransaction struct {
+	Executor       *model.Executor
+	Id             model.Id
+	States         []string
+	Values         map[string]any
+	Board          *arch.Board
+	Host           model.Id
+	EnhanceSpellId model.Id
+}
+
+func NewEnhanceTransaction(board *arch.Board, host model.Id, enhanceSpellId model.Id) *EnhanceTransaction {
+	return &EnhanceTransaction{
+		Id:             board.IdGenerator.GenerateId(),
+		Board:          board,
+		Host:           host,
+		EnhanceSpellId: enhanceSpellId,
+		States: []string{
+			consts.STATE_TRANSACTION,
+			consts.STATE_TRANSACTION_TYPE,
+		},
+		Values: map[string]any{},
+	}
+}
+
+func (t *EnhanceTransaction) Execute(modifiers map[string]any) error {
+	// get the dual
+	dualIns, err := t.Board.GetInstanceById(t.Host)
+	if err != nil {
+		return err
+	}
+
+	dual, ok := dualIns.(*arch.Dual)
+	if !ok {
+		return fmt.Errorf("instance is not a dual")
+	}
+	enhanceSpellIns, err := t.Board.GetInstanceById(t.EnhanceSpellId)
+	if err != nil {
+		return err
+	}
+	enhanceSpell, ok := enhanceSpellIns.(arch.Spell)
+	if !ok {
+		return fmt.Errorf("instance is not a spell")
+	}
+
+	newModifiers, err := enhanceSpell.Enhance(modifiers)
+	if err != nil {
+		return err
+	}
+
+	dual.Modifier = newModifiers
+	return nil
+
+}

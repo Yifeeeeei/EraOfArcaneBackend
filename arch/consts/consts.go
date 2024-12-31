@@ -54,3 +54,8 @@ const (
 	VALUE_TRANSACTION_TAKE_DAMAGE = "transaction_take_damage"
 	VALUE_TRANSACTION_DIE         = "transaction_die"
 )
+
+// dual
+const (
+	STATE_DUAL = "dual"
+)
